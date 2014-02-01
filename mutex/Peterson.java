@@ -34,7 +34,7 @@ public class Peterson implements Lock
     public void lock() {
         int i = THREAD_ID.get() % 2;
         int j = 1 - i;
-        flag [i].set(true); // I am interested
+        flag[i].set(true); // I am interested
         victim = i ; // you go first
         while ( flag[j].get() && victim == i) {}; // wait
     }
