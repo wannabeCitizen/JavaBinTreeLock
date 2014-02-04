@@ -31,6 +31,7 @@ public class Peterson implements Lock
             flag[i] = new AtomicBoolean();
     }
     
+    
     public void lock() {
         int i = THREAD_ID.get() % 2;
         int j = 1 - i;
@@ -39,9 +40,22 @@ public class Peterson implements Lock
         while ( flag[j].get() && victim == i) {}; // wait
     }
     
+    public void lock(int i) {
+        i %= 2;
+        int j = 1 - i;
+        flag[i].set(true); // I am interested
+        victim = i ; // you go first
+        while ( flag[j].get() && victim == i) {}; // wait
+    }
+
     public void unlock() {
         int i = THREAD_ID.get() % 2;
         flag[i].set(false); // I am not interested
+    }
+
+    public void unlock(int i){
+        i %= 2;
+        flag[i].set(false); // I am not interested  
     }
 
     // Any class implementing Lock must provide these methods

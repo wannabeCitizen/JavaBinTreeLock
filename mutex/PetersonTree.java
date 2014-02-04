@@ -36,35 +36,34 @@ public class PetersonTree{
 	public void PTlock(){
 		//Get ID and starting point
 		int i = THREAD_ID.get();
-		int start = this.MAX_DEPTH;
+		int start = this.MAX_DEPTH - 1;
+		int me;
 
 		//Keep trying to obtain the next level lock until you've achieved root lock
 		while (start>=0){
-			int me = i;
-			System.out.println("Attempting lock: " + start + ", " + me);
-			this.lockLevel[start][me].lock();
+			me = i;
+			i = (int) Math.floor(i/2);
+			this.lockLevel[start][i].lock(me);
 			start--;
-			me = (int) Math.ceil(i/2);
 		}
-
 	}
 
 	//For unlocking your path
 	public void PTunlock(){
-
 		int i = THREAD_ID.get();
-		ArrayList<Integer> path = new ArrayList(this.MAX_DEPTH);
+		ArrayList<Integer> path = new ArrayList(this.MAX_DEPTH + 1);
 		int start = 0;
+		path.add(i);
 
 		//Need to figure out what locks we have to unlock
-		for(int j=0 ; j < path.size() ; j++){
+		for(int j=0 ; j < this.MAX_DEPTH ; j++){
+			i = (int) Math.floor(i/2);
 			path.add(i);
-			i = (int) Math.ceil(i/2);
 		}
 
 		//Using path through tree, I go back and unlock
-		for(int j=(path.size() - 1); j > 0; j--){
-			this.lockLevel[start][path.get(j)].unlock();
+		for(int j=(path.size() - 1); j >= 1; j--){
+			this.lockLevel[start][path.get(j)].unlock(path.get(j-1));
 			start++;
 		}
 			

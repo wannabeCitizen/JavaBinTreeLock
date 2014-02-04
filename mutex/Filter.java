@@ -39,7 +39,8 @@ public class Filter implements Lock
     
     public void lock() {
         int me = THREAD_ID.get();
-        for (int i=1 ; i<n ; i++) { //attempt level 1
+        for (int i=1 ; i<this.n ; i++) { //attempt level 1
+            System.out.println("Attempting Level " + i);
             level[me].set(i);
             victim[i].set(me);
             // spin while conflicts exist
@@ -48,7 +49,7 @@ public class Filter implements Lock
     }
     
     private boolean exists(int me, int i){
-        for(int k=0 ; k<n ; k++){
+        for(int k=0 ; k<this.n ; k++){
             if(k==me)
                 continue;
             
